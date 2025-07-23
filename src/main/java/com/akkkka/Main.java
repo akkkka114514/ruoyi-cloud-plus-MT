@@ -21,8 +21,9 @@ public class Main {
     public static final String topDomain = "com";
     public static final String companyName = "example";
     public static final String projectName = "my-example-project";
+    public static final String applicationName = "MyExampleProject";
     public static final String zipPath = "C:\\Users\\Admin\\Downloads\\RuoYi-Cloud-Plus.zip";
-    public static String destDir = "E:\\";
+    public static String destDir = "D:\\ideaWorkspace";
     public static String rootName;
     public static Map<String, String> namespace = new HashMap<>();
 
@@ -95,19 +96,21 @@ public class Main {
         String filename = file.getName();
         if(file.getName().contains("RuoYi-Cloud-Plus")) {
             filename = projectName;
+        } else if (file.getName().contains("Application.java")) {
+            filename = applicationName+"Application.java";
         }else{
-            filename = filename.replace("ruoyi", projectName)
-                .replace("RuoYi", projectName)
-                .replace("org", topDomain)
-                .replace("dromara", companyName);
-        }
+                filename = filename.replace("ruoyi", projectName)
+                    .replace("RuoYi", projectName)
+                    .replace("org", topDomain)
+                    .replace("dromara", companyName);
+            }
 
-        if(file.renameTo(new File(file.getParentFile(),filename))){
-            logger.info("重命名文件夹后: " +  file.getParentFile()+"\\"+filename);
-        }else{
-            logger.log(Level.SEVERE, "重命名失败: " + file.getAbsolutePath());
+            if(file.renameTo(new File(file.getParentFile(),filename))){
+                logger.info("重命名文件夹后: " +  file.getParentFile()+"\\"+filename);
+            }else{
+                logger.log(Level.SEVERE, "重命名失败: " + file.getAbsolutePath());
+            }
         }
-    }
 
     public static void renameInPom(File file){
         SAXReader saxReader = new SAXReader();
@@ -128,11 +131,11 @@ public class Main {
         getNodes("//xmlns:artifactId", document)
                 .stream()
                 .filter(node -> node.getText().contains("ruoyi"))
-                .forEach(node -> node.setText(groupId));
+                .forEach(node -> node.setText(node.getText().replace("ruoyi", projectName)));
         //修改module
         getNodes("//xmlns:module", document)
                 .forEach(node -> node
-                        .setText(node.getText().replace("ruoyi", node.getText().replace("RuoYi", projectName))));
+                        .setText(node.getText().replace("ruoyi", projectName)));
         //修改项目name
         getNodes("//xmlns:name", document)
                 .stream()
