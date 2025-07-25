@@ -1,13 +1,15 @@
 package com.akkkka;
 
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.expr.ClassExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -15,15 +17,24 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static com.akkkka.RenameConfig.*;
+
+/**
+* @author: akkkka114514
+* @date: 13:02:40 2025-07-24
+*/
 public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
-    public static final String groupId = "com.example";
-    public static final String topDomain = "com";
-    public static final String companyName = "example";
-    public static final String projectName = "my-example-project";
-    public static final String applicationName = "MyExampleProject";
-    public static final String zipPath = "C:\\Users\\Admin\\Downloads\\RuoYi-Cloud-Plus.zip";
-    public static String destDir = "D:\\ideaWorkspace";
+    public static final String XPATH_NAMESPACE_PREFIX = "//xmlns:";
+    public static final String POM_XML_FILE_STRING = "pom.xml";
+    public static final String APP_FILENAME_SUFFIX = "Application.java";
+    public static final String RUOYI_TOP_DOMAIN = "org";
+    public static final String RUOYI_COMPANY_NAME = "Dromara";
+    public static final String RUOYI_PROJECT_NAME = "RuoYi-Cloud-Plus";
+    public static final String RUOYI_GROUP_ID = "org.dromara";
+    public static final String RuoYi_STRING = "RuoYi";
+    public static final String ruoyi_STRING= "ruoyi";
+
     public static String rootName;
     public static Map<String, String> namespace = new HashMap<>();
 
@@ -38,11 +49,11 @@ public class Main {
         if(!destDir.endsWith("\\")){
             destDir = destDir+"\\";
         }
-        if(new File(destDir+"\\"+projectName).exists()){
-            logger.log(Level.SEVERE, "目标目录已存在:"+destDir+projectName);
+        if(new File(destDir+"\\"+MY_PROJECT_NAME).exists()){
+            logger.log(Level.SEVERE, "目标目录已存在");
             return;
         }
-        String rootName = unzip(zipPath, destDir);
+        String rootName = unzip(ZIP_PATH, destDir);
         logger.info("解压完成:"+rootName);
         File file = new File(destDir+rootName);
         fileBatchRename(file);
@@ -81,69 +92,66 @@ public class Main {
                 Comparator
                     .comparingInt(path -> path.toString().split("\\\\").length).reversed())
             .forEach(path -> {
-                if(path.endsWith("pom.xml")){
+                if(path.endsWith(POM_XML_FILE_STRING)){
                     renameInPom(path.toFile());
-                }else{
-                    renameOther(path.toFile());
+                }else if(path.toString().contains(APP_FILENAME_SUFFIX)){
+                    renameInJava(path.toFile());
                 }
+                renameDirAndFileName(path.toFile());
             });
-
     }
 
-    public static void renameOther(File file) {
+    public static void renameDirAndFileName(File file) {
         assert file.getParentFile().exists();
         logger.info("重命名:"+file.getAbsolutePath());
-        String filename = file.getName();
-        if(file.getName().contains("RuoYi-Cloud-Plus")) {
-            filename = projectName;
-        } else if (file.getName().contains("Application.java")) {
-            filename = applicationName+"Application.java";
-        }else{
-                filename = filename.replace("ruoyi", projectName)
-                    .replace("RuoYi", projectName)
-                    .replace("org", topDomain)
-                    .replace("dromara", companyName);
-            }
+        String filename = getString(file);
 
-            if(file.renameTo(new File(file.getParentFile(),filename))){
+        if(file.renameTo(new File(file.getParentFile(),filename))){
                 logger.info("重命名文件夹后: " +  file.getParentFile()+"\\"+filename);
             }else{
                 logger.log(Level.SEVERE, "重命名失败: " + file.getAbsolutePath());
             }
         }
 
+    private static String getString(File file) {
+        String filename = file.getName();
+        if(file.getName().contains(RUOYI_PROJECT_NAME)) {
+            filename = MY_PROJECT_NAME;
+        } else if (file.getName().contains(APP_FILENAME_SUFFIX)) {
+            filename = file.getName().replace(RuoYi_STRING, MY_APP_NAME);
+        }else{
+            filename = filename.replace(ruoyi_STRING, MY_APP_NAME)
+                .replace(RuoYi_STRING, MY_APP_NAME)
+                .replace(RUOYI_TOP_DOMAIN,MY_TOP_DOMAIN)
+                .replace(RUOYI_COMPANY_NAME, MY_COMPANY_NAME);
+            }
+        return filename;
+    }
+
+    //修改pom.xml文件里的字段
     public static void renameInPom(File file){
-        SAXReader saxReader = new SAXReader();
-        Document document = null;
-        try(FileInputStream fis = new FileInputStream(file)){
-            document=saxReader.read(fis);
-        }catch (Exception e){
-            logger.info("文件:"+file.getAbsolutePath()+"解析失败");
-        }
+        Document document = parseXml(file);
         assert document != null;
 
-        //修改groupId
-        getNodes("//xmlns:groupId", document)
-                .stream()
-                .filter(node -> node.getText().contains("org.dromara"))
-                .forEach(node -> node.setText(groupId));
+
         //修改artifactId
-        getNodes("//xmlns:artifactId", document)
+        getNodes(XPATH_NAMESPACE_PREFIX+"artifactId", document)
                 .stream()
-                .filter(node -> node.getText().contains("ruoyi"))
-                .forEach(node -> node.setText(node.getText().replace("ruoyi", projectName)));
+                .filter(node -> node.getText().contains(ruoyi_STRING))
+                .forEach(node -> node.setText(node.getText().replace("ruoyi", MY_PROJECT_NAME)));
         //修改module
-        getNodes("//xmlns:module", document)
+        getNodes(XPATH_NAMESPACE_PREFIX+"module", document)
                 .forEach(node -> node
-                        .setText(node.getText().replace("ruoyi", projectName)));
+                        .setText(node.getText().replace(ruoyi_STRING, MY_PROJECT_NAME)));
         //修改项目name
-        getNodes("//xmlns:name", document)
+        getNodes(XPATH_NAMESPACE_PREFIX+"name", document)
                 .stream()
-                .filter(node -> node.getText().contains("RuoYi"))
-                .forEach(node -> node.setText(node.getText().replace("RuoYi", projectName)));
+                .filter(node -> node.getText().contains(RuoYi_STRING))
+                .forEach(node -> node.setText(node.getText().replace(RuoYi_STRING, MY_PROJECT_NAME)));
         //修改项目description
-        getNodes("//xmlns:description", document)
-                .forEach(node -> node.setText(node.getText().replace("Dromara RuoYi-Cloud-Plus", projectName)));
+        getNodes(XPATH_NAMESPACE_PREFIX+"description", document)
+                //描述中的标志性字段
+                .forEach(node -> node.setText(node.getText().replace("Dromara RuoYi-Cloud-Plus", MY_PROJECT_NAME)));
         logger.info("重命名:"+file.getAbsolutePath()+":"+file.getName());
         // 写回文件
         try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -155,9 +163,83 @@ public class Main {
         }
     }
 
+    public static void renameGroupIdInPom(Document document){
+        //修改groupId
+        getNodes(XPATH_NAMESPACE_PREFIX+"groupId", document)
+                .stream()
+                .filter(node -> node.getText().contains(RUOYI_GROUP_ID))
+                .forEach(node -> node.setText(MY_GROUP_ID));
+    }
     public static List<Node> getNodes(String str, Document document){
         XPath xPath= document.createXPath(str);
         xPath.setNamespaceURIs(namespace);
         return xPath.selectNodes(document);
     }
+    //修改java文件里的字段
+    public static void renameInJava(File file){
+        try {
+            // 解析 Java 文件
+            CompilationUnit cu = StaticJavaParser.parse(new FileInputStream(file));
+
+            // 修改包名
+            cu.getPackageDeclaration().ifPresent(pd -> {
+                String packageName = pd.getNameAsString();
+                packageName = packageName.replace(RUOYI_GROUP_ID, MY_GROUP_ID)
+                        .replace(ruoyi_STRING, MY_PROJECT_NAME)
+                        .replace(RUOYI_TOP_DOMAIN, MY_TOP_DOMAIN)
+                        .replace(RUOYI_COMPANY_NAME, MY_COMPANY_NAME);
+                pd.setName(packageName);
+            });
+
+            // 修改类名（如果类名包含 ruoyi 或 RuoYi）
+            cu.findAll(ClassOrInterfaceDeclaration.class).forEach(cid -> {
+                String className = cid.getNameAsString();
+                if (className.contains(RuoYi_STRING)) {
+                    className = className.replace(RuoYi_STRING, MY_APP_NAME);
+                    cid.setName(className);
+                }
+            });
+
+            cu.findAll(ObjectCreationExpr.class).forEach(oc -> {
+                if (oc.getType().getNameAsString().equals("SpringApplication")) {
+                    oc.getArguments().forEach(arg -> {
+                        if (arg instanceof com.github.javaparser.ast.expr.ClassExpr) {
+                            com.github.javaparser.ast.expr.ClassExpr classExpr = (ClassExpr) arg;
+                            String className = classExpr.getType().asString();
+                            if (className.contains(RuoYi_STRING)) {
+                                String newClassName = className.replace("RuoYi", MY_APP_NAME);
+                                // 重新构造 ClassExpr
+                                try {
+                                    classExpr.setType(StaticJavaParser.parseType(newClassName));
+                                } catch (Exception e) {
+                                    logger.log(Level.SEVERE, "无法解析新的类名: " + newClassName, e);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+            // 将修改后的代码写回文件
+            Files.write(Paths.get(file.getAbsolutePath()), cu.toString().getBytes());
+
+            logger.info("成功修改Java文件: " + file.getAbsolutePath());
+
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "解析或修改Java文件失败: " + file.getAbsolutePath(), e);
+        }
+    }
+
+
+    // 解析XML文件
+    public static Document parseXml(File file){
+        SAXReader saxReader = new SAXReader();
+        Document document = null;
+        try(FileInputStream fis = new FileInputStream(file)){
+            document=saxReader.read(fis);
+        }catch (Exception e){
+            logger.info("文件:"+file.getAbsolutePath()+"解析失败");
+        }
+        return document;
+    }
+
 }
