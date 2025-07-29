@@ -1,7 +1,6 @@
 package com.akkkka;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * @author: akkkka114514

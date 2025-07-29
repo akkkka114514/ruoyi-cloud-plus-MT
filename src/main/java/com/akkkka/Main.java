@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static com.akkkka.Constants.LOG_LEVEL;
 import static com.akkkka.RenameConfig.*;
 
 /**
@@ -15,8 +16,12 @@ import static com.akkkka.RenameConfig.*;
 * @date: 13:02:40 2025-07-24
 */
 public class Main {
-    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    private static final Logger logger;
 
+    static {
+        logger = Logger.getLogger(Main.class.getName());
+        logger.setLevel(LOG_LEVEL);
+    }
     public static String rootName;
     private static final RenameStrategyManager strategyManager = new RenameStrategyManager();
 
@@ -71,13 +76,7 @@ public class Main {
     public static void fileBatchRename(File rootDir) throws IOException {
         Files.walk(rootDir.toPath())
             .sorted(Comparator.comparingInt(path -> path.toString().split("\\\\").length).reversed())
-            .forEach(path -> {
-                try {
-                    strategyManager.renameFile(path.toFile());
-                } catch (IOException e) {
-                    logger.log(Level.SEVERE, "重命名文件失败: " + path, e);
-                }
-            });
+            .forEach(path -> strategyManager.renameFile(path.toFile()));
     }
 
 }

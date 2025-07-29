@@ -22,10 +22,13 @@ import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
  * @description: yaml文件内容处理
  */
 public class YamlRenameStrategy implements RenameStrategy{
-    private static final Logger logger = Logger.getLogger(YamlRenameStrategy.class.getName());
+    private static final Logger logger;
 
     private static final YAMLMapper yamlMapper;
     static{
+        logger = Logger.getLogger(YamlRenameStrategy.class.getName());
+        logger.setLevel(Constants.LOG_LEVEL);
+
         YAMLFactory yamlFactory = new YAMLFactory();
         yamlMapper = new YAMLMapper(yamlFactory);
         yamlMapper.enable(com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.MINIMIZE_QUOTES);

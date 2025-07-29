@@ -1,5 +1,7 @@
 package com.akkkka;
 
+import java.util.logging.Level;
+
 /**
  * @author: akkkka114514
  * @create: 2025-07-26 21:17
@@ -10,7 +12,7 @@ public final class Constants {
     public static final String POM_XML_FILE_STRING = "pom.xml";
     public static final String APP_FILENAME_SUFFIX = "Application.java";
     public static final String RUOYI_TOP_DOMAIN = "org";
-    public static final String RUOYI_COMPANY_NAME = "Dromara";
+    public static final String RUOYI_COMPANY_NAME = "dromara";
     public static final String RUOYI_PROJECT_NAME = "RuoYi-Cloud-Plus";
     public static final String RUOYI_GROUP_ID = "org.dromara";
     public static final String RuoYi_STRING = "RuoYi";
@@ -19,4 +21,7 @@ public final class Constants {
 
     public static final Boolean DO_CREATE_DEST_DIR = true;
     public static final String TEMP_MARK = "TEMP_MARK";
+
+    public static final Level LOG_LEVEL = Level.SEVERE;
+
 }

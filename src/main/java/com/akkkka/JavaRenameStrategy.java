@@ -23,8 +23,11 @@ import static com.akkkka.RenameConfig.*;
  * @description: 负责在java文件里的类名、包名、导入包名、类创建对象、包声明进行修改
  */
 public class JavaRenameStrategy implements RenameStrategy{
-    private static final Logger logger = Logger.getLogger(JavaRenameStrategy.class.getName());
-
+    private static final Logger logger;
+    static {
+        logger = Logger.getLogger(JavaRenameStrategy.class.getName());
+        logger.setLevel(LOG_LEVEL);
+    }
     @Override
     public boolean supports(File file) {
         return file.toString().contains(APP_FILENAME_SUFFIX);
