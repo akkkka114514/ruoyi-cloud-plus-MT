@@ -51,7 +51,23 @@ public class DirAndFileRenameStrategy implements RenameStrategy{
         } else if (filename.contains(RUOYI_TOP_DOMAIN) && file.isDirectory()) {
             //处理org文件夹
             filename = filename.replace(RUOYI_TOP_DOMAIN, MY_TOP_DOMAIN);
-        }else{
+        }else if(filename.equals("README.md")
+                &&file.getParentFile().getName().contains(RUOYI_PROJECT_NAME)){
+            //确保是项目根文件夹下的README.md,其他有用
+            try {
+                FileUtils.delete(file);
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "删除README.md失败: " + file.getAbsolutePath(), e);
+            }
+            return;
+        }else if(filename.equals(".gitee")){
+            try{
+                FileUtils.deleteDirectory(file);
+            }catch (IOException e){
+                logger.log(Level.SEVERE, "删除.gitee失败: " + file.getAbsolutePath(), e);
+            }
+            return;
+        }else {
             return;
         }
 

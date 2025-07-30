@@ -2,10 +2,8 @@ package com.akkkka;
 
 import org.dom4j.Document;
 import org.dom4j.Node;
-import org.dom4j.XPath;
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -41,6 +39,7 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy{
     @Override
     public void rename(File file) {
         Document document = parseXml(file);
+        setNamespace(namespace);
 
         if (document != null) {
             renameGroupIdInPom(document);
@@ -48,6 +47,7 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy{
             renameModuleInPom(document);
             renameRootNameInPom(document);
             renameDescriptionInPom(document);
+            deleteUrlNode(document);
 
             saveXml(file, document);
             logger.info("pom.xml文件:" + file.getAbsolutePath() + "重命名成功");
@@ -65,7 +65,16 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy{
         getNodes(XPATH_NAMESPACE_PREFIX+"artifactId", document)
                 .stream()
                 .filter(node -> node.getText().contains(ruoyi_STRING))
-                .forEach(node -> node.setText(node.getText().replace(RUOYI_PROJECT_NAME, MY_PROJECT_NAME).replace(ruoyi_STRING, MY_PROJECT_NAME)));
+                .forEach(node -> {
+                    String text = node.getText();
+                        if(text.equals(RUOYI_PROJECT_NAME)){
+                            node.setText(MY_PROJECT_NAME);
+                        }else {
+                            node.setText(
+                                text.replace(RUOYI_PROJECT_NAME, MY_PROJECT_NAME)
+                                    .replace(ruoyi_STRING, MY_PROJECT_NAME));
+                        }
+                });
     }
 
     private void renameModuleInPom(Document document) {
@@ -85,11 +94,10 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy{
                 .forEach(node -> node.setText(node.getText().replace(RUOYI_DESC_IDENTITY, MY_PROJECT_NAME).replace(ruoyi_STRING, MY_PROJECT_NAME)));
     }
 
-    private List<Node> getNodes(String nodeName, Document document) {
-        XPath xPath = document.createXPath(nodeName);
-        xPath.setNamespaceURIs(namespace);
-        return xPath.selectNodes(document);
+    private void deleteUrlNode(Document document){
+        getNodes(XPATH_NAMESPACE_PREFIX+"url", document)
+                .forEach(Node::detach);
     }
-
+    
 
 }

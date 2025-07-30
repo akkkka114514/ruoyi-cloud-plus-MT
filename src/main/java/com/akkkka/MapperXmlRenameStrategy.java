@@ -3,7 +3,6 @@ package com.akkkka;
 import org.dom4j.*;
 
 import java.io.File;
-import java.util.List;
 import java.util.logging.Logger;
 
 import static com.akkkka.Constants.RUOYI_GROUP_ID;
@@ -36,11 +35,6 @@ public class MapperXmlRenameStrategy extends XmlRenameStrategy{
             logger.info("mybatis mapper文件:" + file.getAbsolutePath() + "重命名成功");
         }
     }
-    private List<Node> getNodes(String nodeName, Document document) {
-        XPath xPath = document.createXPath(nodeName);
-        return xPath.selectNodes(document);
-    }
-
 
     private void renameNamespace(Document document) {
         getNodes("//mapper", document)

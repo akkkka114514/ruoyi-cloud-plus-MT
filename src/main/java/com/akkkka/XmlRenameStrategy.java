@@ -1,6 +1,8 @@
 package com.akkkka;
 
 import org.dom4j.Document;
+import org.dom4j.Node;
+import org.dom4j.XPath;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
@@ -8,6 +10,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +22,8 @@ import java.util.logging.Logger;
  */
 public abstract class XmlRenameStrategy implements RenameStrategy{
     protected static final Logger logger = Logger.getLogger(XmlRenameStrategy.class.getName());
+    protected static Map<String, String> namespace;
+
     static {
         logger.setLevel(Constants.LOG_LEVEL);
     }
@@ -39,5 +45,18 @@ public abstract class XmlRenameStrategy implements RenameStrategy{
         } catch (IOException e) {
             logger.log(Level.SEVERE, "写入pom.xml文件失败: " + file.getAbsolutePath(), e);
         }
+    }
+
+    protected List<Node> getNodes(String nodeName, Document document){
+        XPath xPath = document.createXPath(nodeName);
+        if(namespace==null){
+            return xPath.selectNodes(document);
+        }
+        xPath.setNamespaceURIs(namespace);
+        return xPath.selectNodes(document);
+    }
+
+    protected void setNamespace(Map<String, String> namespace){
+        XmlRenameStrategy.namespace = namespace;
     }
 }

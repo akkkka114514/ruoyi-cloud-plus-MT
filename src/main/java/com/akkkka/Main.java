@@ -26,6 +26,7 @@ public class Main {
     private static final RenameStrategyManager strategyManager = new RenameStrategyManager();
 
     public static void main(String[] args) throws IOException {
+        Long startTime = System.currentTimeMillis();
         if(!destDir.endsWith("\\")){
             destDir = destDir+"\\";
         }
@@ -44,6 +45,8 @@ public class Main {
         logger.info("开始重命名文件");
         fileBatchRename(file);
         logger.info("所有文件重命名完成");
+        Long endTime = System.currentTimeMillis();
+        logger.info("耗时:"+(endTime-startTime)+"ms");
     }
     // 解压 ZIP 文件到目标目录
     public static String unzip(String zipPath, String destDir) throws IOException {

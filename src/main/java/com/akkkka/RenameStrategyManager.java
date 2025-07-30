@@ -16,9 +16,12 @@ public class RenameStrategyManager {
         this.strategies = new ArrayList<>();
         strategies.add(new PomXmlRenameStrategy());
         strategies.add(new MapperXmlRenameStrategy());
+        strategies.add(new RunXmlRenameStrategy());
+        //strategies.add(new PropertiesRenameStrategy());
+        strategies.add(new DockerfileRenameStrategy());
         strategies.add(new JavaRenameStrategy());
         strategies.add(new YamlRenameStrategy());
-        strategies.add(new DirAndFileRenameStrategy());// 默认策略放在最后
+        strategies.add(new DirAndFileRenameStrategy());
     }
 
     public void renameFile(File file) {

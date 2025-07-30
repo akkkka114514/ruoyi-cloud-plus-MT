@@ -4,6 +4,7 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.ClassExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 
 import java.io.File;
@@ -42,6 +43,7 @@ public class JavaRenameStrategy implements RenameStrategy{
             renameImportExprInJava(cu);
             renameObjCreationInJava(cu);
             renamePackageExprInJava(cu);
+            renameInRunFunc(cu);
 
             Files.write(Paths.get(file.getAbsolutePath()), cu.toString().getBytes());
             logger.info("成功修改Java文件内容: " + file.getAbsolutePath());
@@ -89,6 +91,34 @@ public class JavaRenameStrategy implements RenameStrategy{
                     if (arg instanceof ClassExpr) {
                         ClassExpr classExpr = (ClassExpr) arg;
                         String className = classExpr.getType().asString();
+                        if (className.contains(RuoYi_STRING)) {
+                            String newClassName = className.replace(RuoYi_STRING, MY_APP_NAME);
+                            try {
+                                classExpr.setType(StaticJavaParser.parseType(newClassName));
+                            } catch (Exception e) {
+                                logger.log(Level.SEVERE, "无法解析新的类名: " + newClassName, e);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+    private void renameInRunFunc(CompilationUnit cu){
+        cu.findAll(MethodCallExpr.class).forEach(mce -> {
+            // 检查是否为 SpringApplication.run() 方法调用
+            if ("run".equals(mce.getNameAsString()) &&
+                    mce.getScope().isPresent() &&
+                    "SpringApplication".equals(mce.getScope().get().toString())) {
+
+                // 遍历方法参数
+                mce.getArguments().forEach(arg -> {
+                    // 处理 ClassExpr 类型参数（如 RuoYiMonitorApplication.class）
+                    if (arg instanceof ClassExpr) {
+                        ClassExpr classExpr = (ClassExpr) arg;
+                        String className = classExpr.getType().asString();
+
+                        // 如果类名包含 RuoYi 字段，则进行替换
                         if (className.contains(RuoYi_STRING)) {
                             String newClassName = className.replace(RuoYi_STRING, MY_APP_NAME);
                             try {
