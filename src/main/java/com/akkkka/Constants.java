@@ -22,6 +22,6 @@ public final class Constants {
     public static final Boolean DO_CREATE_DEST_DIR = true;
     public static final String TEMP_MARK = "TEMP_MARK";
 
-    public static final Level LOG_LEVEL = Level.SEVERE;
+    public static final Level LOG_LEVEL = Level.INFO;
 
 }

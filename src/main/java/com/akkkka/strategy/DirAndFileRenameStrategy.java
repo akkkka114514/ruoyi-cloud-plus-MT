@@ -1,5 +1,6 @@
-package com.akkkka;
+package com.akkkka.strategy;
 
+import com.akkkka.RenameStrategy;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -15,7 +16,7 @@ import static com.akkkka.RenameConfig.*;
  * @create: 2025-07-26 21:10
  * @description: 负责重命名目录和文件名
  */
-public class DirAndFileRenameStrategy implements RenameStrategy{
+public class DirAndFileRenameStrategy implements RenameStrategy {
     private static final Logger logger;
     static {
         logger = Logger.getLogger(DirAndFileRenameStrategy.class.getName());

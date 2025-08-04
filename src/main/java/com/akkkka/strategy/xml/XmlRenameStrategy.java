@@ -1,5 +1,8 @@
-package com.akkkka;
+package com.akkkka.strategy.xml;
 
+import com.akkkka.Constants;
+import com.akkkka.Parsable;
+import com.akkkka.RenameStrategy;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.XPath;
@@ -20,14 +23,14 @@ import java.util.logging.Logger;
  * @create: 2025-07-28 13:39
  * @description:
  */
-public abstract class XmlRenameStrategy implements RenameStrategy{
+public abstract class XmlRenameStrategy implements RenameStrategy, Parsable<Document> {
     protected static final Logger logger = Logger.getLogger(XmlRenameStrategy.class.getName());
     protected static Map<String, String> namespace;
 
     static {
         logger.setLevel(Constants.LOG_LEVEL);
     }
-    protected Document parseXml(File file) {
+    public Document parse(File file) {
         SAXReader saxReader = new SAXReader();
         Document document = null;
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -49,10 +52,9 @@ public abstract class XmlRenameStrategy implements RenameStrategy{
 
     protected List<Node> getNodes(String nodeName, Document document){
         XPath xPath = document.createXPath(nodeName);
-        if(namespace==null){
-            return xPath.selectNodes(document);
+        if(namespace!=null){
+            xPath.setNamespaceURIs(namespace);
         }
-        xPath.setNamespaceURIs(namespace);
         return xPath.selectNodes(document);
     }
 

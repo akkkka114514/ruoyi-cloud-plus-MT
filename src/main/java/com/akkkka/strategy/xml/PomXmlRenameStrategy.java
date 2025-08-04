@@ -1,9 +1,11 @@
-package com.akkkka;
+package com.akkkka.strategy.xml;
 
+import com.akkkka.Constants;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -16,7 +18,7 @@ import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
  * @create: 2025-07-26 20:58
  * @description:
  */
-public class PomXmlRenameStrategy extends XmlRenameStrategy{
+public class PomXmlRenameStrategy extends XmlRenameStrategy {
     private static final Logger logger;
 
     private static final Map<String, String> namespace;
@@ -38,7 +40,7 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy{
 
     @Override
     public void rename(File file) {
-        Document document = parseXml(file);
+        Document document = parse(file);
         setNamespace(namespace);
 
         if (document != null) {
@@ -47,6 +49,7 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy{
             renameModuleInPom(document);
             renameRootNameInPom(document);
             renameDescriptionInPom(document);
+            renameCommentInPom(document);
             deleteUrlNode(document);
 
             saveXml(file, document);
@@ -68,6 +71,8 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy{
                 .forEach(node -> {
                     String text = node.getText();
                         if(text.equals(RUOYI_PROJECT_NAME)){
+                            node.setText(MY_PROJECT_NAME);
+                        }else if(text.equals(RUOYI_PROJECT_NAME.toLowerCase(Locale.ROOT))){
                             node.setText(MY_PROJECT_NAME);
                         }else {
                             node.setText(
@@ -98,6 +103,18 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy{
         getNodes(XPATH_NAMESPACE_PREFIX+"url", document)
                 .forEach(Node::detach);
     }
-    
+
+    private void renameCommentInPom(Document document){
+        getNodes("//comment()", document).forEach(
+                node -> {
+                    String text = node.getText();
+                    if(text.contains(RuoYi_STRING)){
+                        node.setText(text.replace(RuoYi_STRING,MY_PROJECT_NAME));
+                    }
+                    if(text.contains(ruoyi_STRING)){
+                        node.setText(text.replace(ruoyi_STRING,MY_PROJECT_NAME));
+                    }
+                });
+    }
 
 }

@@ -1,10 +1,13 @@
 package com.akkkka;
 
+import com.akkkka.strategy.DirAndFileRenameStrategy;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -59,9 +62,11 @@ public class Main {
                     rootName = entryName.replace("/", "");
                 }
                 if (entry.isDirectory()) {
-                    outFile.mkdirs();
+                    boolean i = outFile.mkdirs();
+                    assert i;
                 } else {
-                    outFile.getParentFile().mkdirs();
+                    boolean i = outFile.getParentFile().mkdirs();
+                    assert i;
                     try (FileOutputStream fos = new FileOutputStream(outFile)) {
                         byte[] buffer = new byte[1024];
                         int len;
@@ -76,10 +81,24 @@ public class Main {
         return rootName;
     }
     // 修改 fileBatchRename 方法
-    public static void fileBatchRename(File rootDir) throws IOException {
-        Files.walk(rootDir.toPath())
-            .sorted(Comparator.comparingInt(path -> path.toString().split("\\\\").length).reversed())
-            .forEach(path -> strategyManager.renameFile(path.toFile()));
+    public static void fileBatchRename(File rootDir){
+        //为了防止路径混乱，先重命名dirname和filename
+        DirAndFileRenameStrategy dirAndFileRenameStrategy = new DirAndFileRenameStrategy();
+        try(Stream<Path> paths = Files.walk(rootDir.toPath())){
+            paths.sorted(
+                    Comparator.comparingInt(
+                            path -> path.toString().split("\\\\").length).reversed())
+            .forEach(path -> dirAndFileRenameStrategy.rename(path.toFile()));
+        }catch (IOException | SecurityException e){
+            logger.log(Level.SEVERE,"处理文件失败: " + rootDir.getAbsolutePath(),e);
+        }
+        //再处理文件内容
+        rootDir = new File(destDir + MY_PROJECT_NAME);
+        try (Stream<Path> paths = Files.walk(rootDir.toPath())){
+            paths.forEach(path -> strategyManager.renameFile(path.toFile()));
+        }catch (IOException | SecurityException e){
+            logger.log(Level.SEVERE,"处理文件失败: " + rootDir.getAbsolutePath(),e);
+        }
     }
 
 }

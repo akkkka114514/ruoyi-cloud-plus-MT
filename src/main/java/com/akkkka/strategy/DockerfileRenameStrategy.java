@@ -1,4 +1,6 @@
-package com.akkkka;
+package com.akkkka.strategy;
+
+import com.akkkka.RenameStrategy;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,7 +23,7 @@ import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
  * @create: 2025-07-30 17:43
  * @description: 修改dockerfile中的ruoyi字段
  */
-public class DockerfileRenameStrategy implements RenameStrategy{
+public class DockerfileRenameStrategy implements RenameStrategy {
     private static final Logger logger;
     static {
         logger = Logger.getLogger(DirAndFileRenameStrategy.class.getName());

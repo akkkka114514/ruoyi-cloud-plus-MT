@@ -1,4 +1,6 @@
-package com.akkkka;
+package com.akkkka.strategy;
+
+import com.akkkka.RenameStrategy;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +18,7 @@ import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
  * @create: 2025-07-30 16:20
  * @description:
  */
-public class PropertiesRenameStrategy implements RenameStrategy{
+public class PropertiesRenameStrategy implements RenameStrategy {
 
     private static final Logger logger;
     static {

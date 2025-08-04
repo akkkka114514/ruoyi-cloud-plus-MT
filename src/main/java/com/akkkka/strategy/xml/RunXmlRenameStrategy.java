@@ -1,4 +1,4 @@
-package com.akkkka;
+package com.akkkka.strategy.xml;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -13,7 +13,7 @@ import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
  * @create: 2025-07-29 15:17
  * @description:修改.run.xml文件的内容
  */
-public class RunXmlRenameStrategy extends XmlRenameStrategy{
+public class RunXmlRenameStrategy extends XmlRenameStrategy {
     @Override
     public boolean supports(File file) {
         return file.getName().endsWith(".run.xml");
@@ -21,7 +21,7 @@ public class RunXmlRenameStrategy extends XmlRenameStrategy{
 
     @Override
     public void rename(File file) {
-        Document document = parseXml(file);
+        Document document = parse(file);
         if (document != null) {
             renameConfigurationNode(document);
             renameOptionNode(document);

@@ -1,5 +1,6 @@
-package com.akkkka;
+package com.akkkka.strategy.xml;
 
+import com.akkkka.Constants;
 import org.dom4j.*;
 
 import java.io.File;
@@ -11,9 +12,9 @@ import static com.akkkka.RenameConfig.MY_GROUP_ID;
 /**
  * @author: akkkka114514
  * @create: 2025-07-28 13:40
- * @description:
+ * @description: 修改mybatis mapper.xml文件中的字段
  */
-public class MapperXmlRenameStrategy extends XmlRenameStrategy{
+public class MapperXmlRenameStrategy extends XmlRenameStrategy {
     private static final Logger logger = Logger.getLogger(MapperXmlRenameStrategy.class.getName());
     static {
         logger.setLevel(Constants.LOG_LEVEL);
@@ -25,9 +26,9 @@ public class MapperXmlRenameStrategy extends XmlRenameStrategy{
 
     @Override
     public void rename(File file) {
-        Document document = parseXml(file);
+        Document document = parse(file);
         if(document!=null){
-            renameNamespace( document);
+            renameNamespace(document);
             renameTypeOfResultMap(document);
             renameResultType(document);
 
