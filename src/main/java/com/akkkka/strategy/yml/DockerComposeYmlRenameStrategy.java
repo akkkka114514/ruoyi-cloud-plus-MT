@@ -36,7 +36,7 @@ public class DockerComposeYmlRenameStrategy extends YamlRenameStrategy {
 
     @Override
     public void rename(File file) {
-        logger.info("Rename docker-compose.yml");
+        logger.info("Rename docker-compose.yml:"+file.getAbsolutePath());
         JsonNode rootNode = parse(file);
         renameValue(
                 rootNode, "services.mysql.environment.MYSQL_ROOT_PASSWORD", ruoyi_STRING, "admin");
@@ -128,6 +128,6 @@ public class DockerComposeYmlRenameStrategy extends YamlRenameStrategy {
 
         writeFile(file, rootNode);
 
-        logger.info("docker-compose.yml处理完成");
+        logger.info("docker-compose.yml处理完成:"+file.getAbsolutePath());
     }
 }

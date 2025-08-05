@@ -2,10 +2,7 @@ package com.akkkka;
 
 import com.akkkka.strategy.DockerfileRenameStrategy;
 import com.akkkka.strategy.JsonRenameStrategy;
-import com.akkkka.strategy.java.ApplicationJavaRenameStrategy;
-import com.akkkka.strategy.java.JavaRenameStrategy;
-import com.akkkka.strategy.java.MonitorApplicationJavaRenameStrategy;
-import com.akkkka.strategy.java.TokenControllerJavaRenameStrategy;
+import com.akkkka.strategy.java.*;
 import com.akkkka.strategy.yml.*;
 import com.akkkka.strategy.xml.MapperXmlRenameStrategy;
 import com.akkkka.strategy.xml.PomXmlRenameStrategy;
@@ -36,6 +33,10 @@ public class RenameStrategyManager {
         strategies.add(new ApplicationJavaRenameStrategy());
         strategies.add(new MonitorApplicationJavaRenameStrategy());
         strategies.add(new TokenControllerJavaRenameStrategy());
+        strategies.add(new RedisConfigurationJavaRenameStrategy());
+        strategies.add(new TestBusControllerJavaRenameStrategy());
+        strategies.add(new GenControllerJavaRenameStrategy());
+        strategies.add(new CommonJavaRenameStrategy());
 
         strategies.add(new ApplicationCommonYmlRenameStrategy());
         strategies.add(new ApplicationYmlRenameStrategy());

@@ -36,7 +36,7 @@ public class PrometheusYmlRenameStrategy extends YamlRenameStrategy {    private
     }
     @Override
     public void rename(File file) {
-        logger.info("Rename prometheus.yml");
+        logger.info("Rename prometheus.yml:"+file.getAbsolutePath());
         JsonNode rootNode = parse(file);
         Objects.requireNonNull(getNavigatedArrayNode(rootNode, "scrape_configs"))
                 .forEach(node -> {
@@ -51,6 +51,6 @@ public class PrometheusYmlRenameStrategy extends YamlRenameStrategy {    private
                     }
                 });
         writeFile(file, rootNode);
-        logger.info("Rename prometheus.yml done");
+        logger.info("Rename prometheus.yml done:"+file.getAbsolutePath());
     }
 }

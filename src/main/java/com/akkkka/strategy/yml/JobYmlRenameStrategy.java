@@ -36,10 +36,12 @@ public class JobYmlRenameStrategy extends YamlRenameStrategy{
 
     @Override
     public void rename(File file) {
+        logger.info("重命名xxx-job.yml:"+file.getAbsolutePath());
         JsonNode rootNode = parse(file);
         renameValue(rootNode, "snail-job.group", ruoyi_STRING, MY_PROJECT_NAME);
         renameValue(rootNode, "snail-job.server.server-name", ruoyi_STRING, MY_PROJECT_NAME);
 
         writeFile(file, rootNode);
+        logger.info("重命名xxx-job.yml完成:"+file.getAbsolutePath());
     }
 }

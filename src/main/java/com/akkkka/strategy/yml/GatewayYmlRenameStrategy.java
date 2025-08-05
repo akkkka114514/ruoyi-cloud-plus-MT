@@ -35,6 +35,7 @@ public class GatewayYmlRenameStrategy extends YamlRenameStrategy{
     }
     @Override
     public void rename(File file) {
+        logger.info("重命名xxx-gateway.yml:"+file.getAbsolutePath());
         JsonNode rootNode = parse(file);
         getNavigatedArrayNode(rootNode, "spring.cloud.gateway.routes").forEach(node ->{
                     renameValue(node, "id", ruoyi_STRING, MY_PROJECT_NAME);
@@ -42,5 +43,6 @@ public class GatewayYmlRenameStrategy extends YamlRenameStrategy{
                 }
         );
         writeFile(file, rootNode);
+        logger.info("重命名xxx-gateway.yml完成:"+file.getAbsolutePath());
     }
 }

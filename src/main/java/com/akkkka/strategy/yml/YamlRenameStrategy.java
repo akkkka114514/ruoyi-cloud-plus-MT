@@ -104,7 +104,7 @@ public abstract class YamlRenameStrategy implements RenameStrategy, Parsable<Jso
 
     @Override
     public JsonNode parse(File file) {
-        logger.info("Parse yml" + file.getName());
+        logger.info("Parse yml" + file.getAbsolutePath());
         try {
             return yamlMapper.readTree(file);
         } catch (IOException e) {

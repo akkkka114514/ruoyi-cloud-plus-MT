@@ -6,9 +6,12 @@ import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.ClassExpr;
+import com.github.javaparser.ast.expr.StringLiteralExpr;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -74,6 +77,27 @@ public abstract class JavaRenameStrategy implements RenameStrategy, Parsable<Com
         }
     }
 
+    void renameStringLiteralExprInJava(CompilationUnit cu){
+        cu.accept(new VoidVisitorAdapter<Void>() {
+            @Override
+            public void visit(StringLiteralExpr n, Void arg) {
+                String originalValue = n.getValue();
+                if (originalValue.contains(RuoYi_STRING)) {
+                    String newValue = originalValue.replace(RuoYi_STRING, MY_PROJECT_NAME);
+                    n.setString(newValue);
+                }
+                super.visit(n, arg);
+            }
+        }, null);
+    }
+    void renameCommentInJava(CompilationUnit cu){
+        cu.getAllContainedComments().stream()
+                .filter(
+                        comment -> comment.asString().contains(ruoyi_STRING))
+                .forEach(
+                        comment -> comment.setContent(comment.asString().replace(ruoyi_STRING, MY_PROJECT_NAME)));
+    }
+
     @Override
     public CompilationUnit parse(File file) {
         ParserConfiguration config = new ParserConfiguration();
@@ -85,5 +109,13 @@ public abstract class JavaRenameStrategy implements RenameStrategy, Parsable<Com
             logger.log(Level.SEVERE, "解析失败，文件不存在: " + file.getAbsolutePath(), e);
         }
         return null;
+    }
+
+    public void writeFile(File file, CompilationUnit cu){
+        try {
+            Files.writeString(file.toPath(), cu.toString());
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "写入文件失败: " + file.getAbsolutePath(), e);
+        }
     }
 }

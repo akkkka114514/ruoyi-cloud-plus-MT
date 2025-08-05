@@ -37,7 +37,7 @@ public class ApplicationCommonYmlRenameStrategy extends YamlRenameStrategy {
 
     @Override
     public void rename(File file) {
-        logger.info("Rename application-common.yml" + file.getName());
+        logger.info("Rename application-common.yml:" + file.getAbsolutePath());
         JsonNode rootNode = parse(file);
         renameValue(
                 rootNode, "spring.cloud.nacos.discovery.metadata.username", ruoyi_STRING, "admin");
@@ -58,6 +58,6 @@ public class ApplicationCommonYmlRenameStrategy extends YamlRenameStrategy {
         deleteNode(rootNode, "springdoc.info.contact");
 
         writeFile(file, rootNode);
-        logger.info("Rename application-common.yml done" + file.getName());
+        logger.info("Rename application-common.yml done:" + file.getAbsolutePath());
     }
 }

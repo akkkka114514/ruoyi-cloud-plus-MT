@@ -38,13 +38,13 @@ public class ApplicationYmlRenameStrategy extends YamlRenameStrategy {
     }
     @Override
     public void rename(File file) {
-        logger.info("Rename application.yml");
+        logger.info("Rename application.yml:"+file.getAbsolutePath());
         JsonNode rootNode = parse(file);
         renameValue(rootNode, "spring.application.name", ruoyi_STRING, MY_PROJECT_NAME);
 
         postProcessYaml(file);
         writeFile(file, rootNode);
-        logger.info("Rename application.yml  done");
+        logger.info("Rename application.yml  done:"+file.getAbsolutePath());
     }
 
     //由于框架解析@字符会出错，所以进行预处理，将所有@@换成临时的占位符

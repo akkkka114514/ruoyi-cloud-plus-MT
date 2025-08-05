@@ -9,28 +9,25 @@ import static com.akkkka.Constants.LOG_LEVEL;
 
 /**
  * @author: akkkka114514
- * @create: 2025-08-04 14:58
- * @description:修改TokenController.java文件
+ * @create: 2025-08-05 10:14
+ * @description: 用来兜底的java rename 策略
  */
-public class TokenControllerJavaRenameStrategy extends JavaRenameStrategy{
+public class CommonJavaRenameStrategy extends JavaRenameStrategy{
     private static final Logger logger;
     static {
         logger = Logger.getLogger(JavaRenameStrategy.class.getName());
         logger.setLevel(LOG_LEVEL);
     }
     @Override
-    public boolean supports(File file) {
-        return file.getName().equals("TokenController.java");
-    }
-
-    @Override
     public void rename(File file) {
-        logger.info("重命名TokenController.java内容："+file.getAbsolutePath());
+        logger.info("重命名java文件中的package语句、author、import语句内容："+file.getAbsolutePath());
         CompilationUnit cu = parse(file);
 
-        renameStringLiteralExprInJava(cu);
+        renamePackageExprInJava(cu);
+        renameImportExprInJava(cu);
+        renameAuthor(cu);
 
         writeFile(file, cu);
-        logger.info("重命名TokenController.java内容："+file.getAbsolutePath()+"成功");
+        logger.info("重命名java文件中的package语句、author、import语句内容完成："+file.getAbsolutePath());
     }
 }

@@ -1,16 +1,11 @@
 package com.akkkka.strategy.java;
 
-import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.akkkka.Constants.LOG_LEVEL;
@@ -20,7 +15,7 @@ import static com.akkkka.RenameConfig.MY_APP_NAME;
 /**
  * @author: akkkka114514
  * @create: 2025-08-04 14:59
- * @description:
+ * @description: 重命名XXXApplication.java里的ruoyi字段
  */
 public class ApplicationJavaRenameStrategy extends JavaRenameStrategy{
     private static final Logger logger;
@@ -36,17 +31,14 @@ public class ApplicationJavaRenameStrategy extends JavaRenameStrategy{
 
     @Override
     public void rename(File file) {
+        logger.info("重命名Application.java内容："+file.getAbsolutePath());
         CompilationUnit cu = parse(file);
+
         renameAppClassNameInJava(cu);
-        renameImportExprInJava(cu);
         renameObjCreationInJava(cu);
-        renamePackageExprInJava(cu);
-        renameAuthor(cu);
-        try {
-            Files.write(Paths.get(file.getAbsolutePath()), cu.toString().getBytes());
-        }catch (IOException e) {
-            logger.log(Level.SEVERE, "写回Java文件失败: " + file.getAbsolutePath(), e);
-        }
+
+        writeFile(file, cu);
+        logger.info("重命名Application.java内容："+file.getAbsolutePath()+"成功");
     }
 
     private void renameObjCreationInJava(CompilationUnit cu) {

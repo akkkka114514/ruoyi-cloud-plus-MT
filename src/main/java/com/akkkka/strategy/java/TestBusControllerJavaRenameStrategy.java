@@ -9,10 +9,10 @@ import static com.akkkka.Constants.LOG_LEVEL;
 
 /**
  * @author: akkkka114514
- * @create: 2025-08-04 14:58
- * @description:修改TokenController.java文件
+ * @create: 2025-08-05 13:02
+ * @description: TestBusController.java重命名策略
  */
-public class TokenControllerJavaRenameStrategy extends JavaRenameStrategy{
+public class TestBusControllerJavaRenameStrategy extends JavaRenameStrategy{
     private static final Logger logger;
     static {
         logger = Logger.getLogger(JavaRenameStrategy.class.getName());
@@ -20,17 +20,17 @@ public class TokenControllerJavaRenameStrategy extends JavaRenameStrategy{
     }
     @Override
     public boolean supports(File file) {
-        return file.getName().equals("TokenController.java");
+        return file.getName().contains("TestBusController.java");
     }
 
     @Override
     public void rename(File file) {
-        logger.info("重命名TokenController.java内容："+file.getAbsolutePath());
+        logger.info("重命名TestBusController.java内容："+file.getAbsolutePath());
         CompilationUnit cu = parse(file);
 
-        renameStringLiteralExprInJava(cu);
+        renameCommentInJava(cu);
 
         writeFile(file, cu);
-        logger.info("重命名TokenController.java内容："+file.getAbsolutePath()+"成功");
+        logger.info("重命名TestBusController.java内容："+file.getAbsolutePath()+"成功");
     }
 }
