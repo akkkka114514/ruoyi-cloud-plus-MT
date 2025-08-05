@@ -6,6 +6,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static com.akkkka.Constants.LOG_LEVEL;
@@ -36,6 +38,7 @@ public class DockerComposeYmlRenameStrategy extends YamlRenameStrategy {
 
     @Override
     public void rename(File file) {
+
         logger.info("Rename docker-compose.yml:"+file.getAbsolutePath());
         JsonNode rootNode = parse(file);
         renameValue(
@@ -50,82 +53,39 @@ public class DockerComposeYmlRenameStrategy extends YamlRenameStrategy {
 
         renameValue(
                 rootNode, "services.seata-server.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
+        renameTextNodeArray(
                 rootNode, "services.seata-server.volumes", ruoyi_STRING, MY_PROJECT_NAME);
 
         renameValue(
                 rootNode, "services.sentinel.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
+        renameTextNodeArray(
                 rootNode, "services.sentinel.volumes", ruoyi_STRING, MY_PROJECT_NAME);
+        List<String> list = List.of(
+                "-monitor","-snailjob-server","-gateway","-auth",
+                "-system","-gen","-job","-resource","-workflow");
 
-        renameKey(
-                rootNode, "services.ruoyi-monitor", ruoyi_STRING, MY_PROJECT_NAME);
-        renameValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-monitor.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-monitor.volumes", ruoyi_STRING, MY_PROJECT_NAME);
+        list.forEach(moduleName -> {
+            renameKey(
+                    rootNode, "services.ruoyi"+moduleName, ruoyi_STRING, MY_PROJECT_NAME);
+            renameValue(
+                    rootNode, "services."+MY_PROJECT_NAME+moduleName+".image", ruoyi_STRING, MY_PROJECT_NAME);
+            renameTextNodeArray(
+                    rootNode, "services."+MY_PROJECT_NAME+moduleName +".volumes", ruoyi_STRING, MY_PROJECT_NAME);
+            renameValue(
+                    rootNode,"services."+MY_PROJECT_NAME+moduleName+".container_name",ruoyi_STRING, MY_PROJECT_NAME);
+        });
 
-        renameKey(
-                rootNode, "services.ruoyi-snailjob-server", ruoyi_STRING, MY_PROJECT_NAME);
-        renameValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-snailjob-server.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-snailjob-server.volumes", ruoyi_STRING, MY_PROJECT_NAME);
-
-        renameKey(
-                rootNode, "services.ruoyi-gateway", ruoyi_STRING, MY_PROJECT_NAME);
-        renameValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-gateway.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-gateway.volumes", ruoyi_STRING, MY_PROJECT_NAME);
-
-        renameKey(
-                rootNode, "services.ruoyi-auth", ruoyi_STRING, MY_PROJECT_NAME);
-        renameValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-auth.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-auth.volumes", ruoyi_STRING, MY_PROJECT_NAME);
-
-        renameKey(
-                rootNode, "services.ruoyi-system", ruoyi_STRING, MY_PROJECT_NAME);
-        renameValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-system.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-system.volumes", ruoyi_STRING, MY_PROJECT_NAME);
-
-        renameKey(
-                rootNode, "services.ruoyi-gen", ruoyi_STRING, MY_PROJECT_NAME);
-        renameValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-gen.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-gen.volumes", ruoyi_STRING, MY_PROJECT_NAME);
-
-        renameKey(
-                rootNode, "services.ruoyi-job", ruoyi_STRING, MY_PROJECT_NAME);
-        renameValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-job.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-job.volumes", ruoyi_STRING, MY_PROJECT_NAME);
-
-        renameKey(
-                rootNode, "services.ruoyi-resource", ruoyi_STRING, MY_PROJECT_NAME);
-        renameValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-resource.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-resource.volumes", ruoyi_STRING, MY_PROJECT_NAME);
-
-        renameKey(
-                rootNode, "services.ruoyi-workflow", ruoyi_STRING, MY_PROJECT_NAME);
-        renameValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-workflow.image", ruoyi_STRING, MY_PROJECT_NAME);
-        renameArrayValue(
-                rootNode, "services."+MY_PROJECT_NAME+"-workflow.volumes", ruoyi_STRING, MY_PROJECT_NAME);
 
         renameValue(
                 rootNode,"services.rabbitmq.environment.RABBITMQ_DEFAULT_USER",ruoyi_STRING,"admin");
         renameValue(
                 rootNode,"services.rabbitmq.environment.RABBITMQ_DEFAULT_PASS",ruoyi_STRING,"admin");
 
+
+        renameValue(
+                rootNode, "services.kafka-manager.environment.KAFKA_MANAGER_USERNAME",ruoyi_STRING,"admin");
+        renameValue(
+                rootNode, "services.kafka-manager.environment.KAFKA_MANAGER_PASSWORD",ruoyi_STRING,"admin");
         writeFile(file, rootNode);
 
         logger.info("docker-compose.yml处理完成:"+file.getAbsolutePath());

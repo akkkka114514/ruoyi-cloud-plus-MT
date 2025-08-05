@@ -12,6 +12,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,10 +90,36 @@ public abstract class YamlRenameStrategy implements RenameStrategy, Parsable<Jso
         }
         return (ArrayNode)parentNode.findValue(lastKey);
     }
-    protected void renameArrayValue(JsonNode rootNode, String path, String toReplace, String replaceWith){
+    protected void renameTextNodeArray(JsonNode rootNode, String path, String toReplace, String replaceWith){
         ArrayNode arrayNode = getNavigatedArrayNode(rootNode,path);
-        arrayNode.forEach(
-                item -> new TextNode(item.asText().replaceAll(toReplace, replaceWith)));
+        if (arrayNode == null) {
+            return;
+        }
+
+        // 创建新的 ArrayNode 来存储重命名后的文本节点
+        ArrayNode newArrayNode = yamlMapper.createArrayNode();
+
+        // 遍历所有 TextNode 并重命名
+        for (int i = 0; i < arrayNode.size(); i++) {
+            JsonNode node = arrayNode.get(i);
+            if (node.isTextual()) {
+                TextNode textNode = (TextNode) node;
+                String oldValue = textNode.asText();
+                String newValue = oldValue.replaceAll(toReplace, replaceWith);
+                newArrayNode.add(new TextNode(newValue));
+            } else {
+                // 非文本节点保持原样
+                newArrayNode.add(node);
+            }
+        }
+
+        // 获取父节点并替换整个数组
+        String[] pathArray = path.split("\\.");
+        String lastKey = pathArray[pathArray.length - 1];
+        ObjectNode parentNode = getNavigatedNode(rootNode, path);
+        if (!parentNode.isMissingNode()) {
+            parentNode.set(lastKey, newArrayNode);
+        }
     }
 
     //经过findpath后的倒数第二个节点

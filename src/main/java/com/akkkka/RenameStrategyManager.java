@@ -44,6 +44,7 @@ public class RenameStrategyManager {
         strategies.add(new PrometheusYmlRenameStrategy());
         strategies.add(new JobYmlRenameStrategy());
         strategies.add(new GatewayYmlRenameStrategy());
+        strategies.add(new MonitorYmlRenameStrategy());
 
         strategies.add(new JsonRenameStrategy());
     }
