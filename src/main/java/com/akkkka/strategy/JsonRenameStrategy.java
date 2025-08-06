@@ -54,7 +54,17 @@ public class JsonRenameStrategy implements RenameStrategy, Parsable<JsonElement>
             newValue = parent.get("value").getAsString().replace(ruoyi_STRING, MY_PROJECT_NAME);
             parent.addProperty("value", newValue);
         }
-        if(filename.equals())
+        if(filename.equals("Spring Boot 2.1 Statistics.json")){
+            JsonObject parent = je.getAsJsonObject()
+                .get("templating").getAsJsonObject()
+                .get("list").getAsJsonArray()
+                .get(0).getAsJsonObject()
+                .get("current").getAsJsonObject();
+                String newValue =
+                        parent.get("text").getAsString().replace(ruoyi_STRING, MY_PROJECT_NAME);
+                parent.addProperty("text", newValue);
+                parent.addProperty("value", newValue);
+        }
 
         writeFile(file, je);
     }

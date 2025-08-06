@@ -77,13 +77,13 @@ public abstract class JavaRenameStrategy implements RenameStrategy, Parsable<Com
         }
     }
 
-    void renameStringLiteralExprInJava(CompilationUnit cu){
+    void renameStringLiteralExprInJava(CompilationUnit cu,String toReplace,String replaceWith){
         cu.accept(new VoidVisitorAdapter<Void>() {
             @Override
             public void visit(StringLiteralExpr n, Void arg) {
                 String originalValue = n.getValue();
-                if (originalValue.contains(RuoYi_STRING)) {
-                    String newValue = originalValue.replace(RuoYi_STRING, MY_PROJECT_NAME);
+                if (originalValue.contains(toReplace)) {
+                    String newValue = originalValue.replace(toReplace, replaceWith);
                     n.setString(newValue);
                 }
                 super.visit(n, arg);

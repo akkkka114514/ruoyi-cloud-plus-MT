@@ -6,6 +6,8 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import static com.akkkka.Constants.LOG_LEVEL;
+import static com.akkkka.Constants.RuoYi_STRING;
+import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
 
 /**
  * @author: akkkka114514
@@ -28,7 +30,7 @@ public class TokenControllerJavaRenameStrategy extends JavaRenameStrategy{
         logger.info("重命名TokenController.java内容："+file.getAbsolutePath());
         CompilationUnit cu = parse(file);
 
-        renameStringLiteralExprInJava(cu);
+        renameStringLiteralExprInJava(cu,RuoYi_STRING,MY_PROJECT_NAME);
 
         writeFile(file, cu);
         logger.info("重命名TokenController.java内容："+file.getAbsolutePath()+"成功");
