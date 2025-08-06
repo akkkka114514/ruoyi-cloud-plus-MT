@@ -45,6 +45,7 @@ public class RenameStrategyManager {
         strategies.add(new JobYmlRenameStrategy());
         strategies.add(new GatewayYmlRenameStrategy());
         strategies.add(new MonitorYmlRenameStrategy());
+        strategies.add(new SnailjobServerYmlRenameStrategy());
 
         strategies.add(new JsonRenameStrategy());
     }

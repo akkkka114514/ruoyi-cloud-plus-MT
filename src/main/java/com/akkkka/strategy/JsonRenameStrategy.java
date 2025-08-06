@@ -54,6 +54,7 @@ public class JsonRenameStrategy implements RenameStrategy, Parsable<JsonElement>
             newValue = parent.get("value").getAsString().replace(ruoyi_STRING, MY_PROJECT_NAME);
             parent.addProperty("value", newValue);
         }
+        if(filename.equals())
 
         writeFile(file, je);
     }

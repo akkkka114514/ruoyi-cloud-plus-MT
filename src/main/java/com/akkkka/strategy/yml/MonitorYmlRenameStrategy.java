@@ -42,5 +42,8 @@ public class MonitorYmlRenameStrategy extends YamlRenameStrategy{
                 rootNode,"spring.boot.admin.ui.title",RUOYI_PROJECT_NAME,MY_PROJECT_NAME);
         renameValue(
                 rootNode, "spring.boot.admin.discovery.ignored-services", ruoyi_STRING, MY_PROJECT_NAME);
+
+        writeFile(file, rootNode);
+        logger.info("Rename"+MY_PROJECT_NAME+"-monitor.yml:"+file.getAbsolutePath()+"success");
     }
 }
