@@ -25,7 +25,6 @@ import static com.akkkka.RenameConfig.*;
 public class Main {
     private static final Logger logger;
     private static final ExecutorService executor = Executors.newFixedThreadPool(48);
-    private static CountDownLatch latch;
 
     static {
         logger = Logger.getLogger(Main.class.getName());
@@ -34,7 +33,7 @@ public class Main {
     public static String rootName;
     private static final RenameStrategyManager strategyManager = new RenameStrategyManager();
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         Long startTime = System.currentTimeMillis();
         if(!destDir.endsWith("\\")){
             destDir = destDir+"\\";
@@ -118,9 +117,8 @@ public class Main {
         try(Stream<Path> paths = Files.walk(rootDir.toPath())){
             paths.filter(path ->
                     path.toFile().isFile()&&strategyManager.supports(path.toFile()))
-                    .forEach(path -> executor.execute(()->{
-                        strategyManager.renameFile(path.toFile());
-                    }));
+                    .forEach(path ->
+                            executor.execute(() -> strategyManager.renameFile(path.toFile())));
         }catch (IOException | SecurityException e){
             logger.log(Level.SEVERE,"处理文件失败: " + rootDir.getAbsolutePath(),e);
         }

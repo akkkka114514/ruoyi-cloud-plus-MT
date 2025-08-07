@@ -90,7 +90,7 @@ public class JsonRenameStrategy implements RenameStrategy, Parsable<JsonElement>
     }
 
     public void writeFile(File file, JsonElement je) {
-        try(JsonWriter jw = gson.newJsonWriter(new FileWriter(file));){
+        try(JsonWriter jw = gson.newJsonWriter(new FileWriter(file))){
             gson.toJson(je, jw);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "写入JSON文件失败: " + file.getAbsolutePath(), e);
