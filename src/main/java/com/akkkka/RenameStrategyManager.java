@@ -58,4 +58,13 @@ public class RenameStrategyManager {
             }
         }
     }
+
+    public boolean supports(File file) {
+        for (RenameStrategy strategy : strategies) {
+            if (strategy.supports(file)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

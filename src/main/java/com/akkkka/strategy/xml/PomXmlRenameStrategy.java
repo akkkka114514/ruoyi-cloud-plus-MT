@@ -40,6 +40,7 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy {
 
     @Override
     public void rename(File file) {
+        logger.info("Rename pom.xml" + file.getName());
         Document document = parse(file);
         setNamespace(namespace);
 
@@ -55,6 +56,7 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy {
             saveXml(file, document);
             logger.info("pom.xml文件:" + file.getAbsolutePath() + "重命名成功");
         }
+        logger.info("pom.xml文件:" + file.getAbsolutePath() + "重命名完成");
     }
 
     private void renameGroupIdInPom(Document document) {

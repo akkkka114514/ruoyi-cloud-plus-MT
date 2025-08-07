@@ -29,7 +29,8 @@ public class PropertiesRenameStrategy implements RenameStrategy {
     }
     @Override
     public boolean supports(File file) {
-        return file.getName().endsWith(".properties");
+        return file.getName().equals("application.properties") && file.getAbsolutePath().contains("nacos")||
+                file.getName().equals("seata-server.properties");
     }
 
     @Override

@@ -36,6 +36,7 @@ public class DockerfileRenameStrategy implements RenameStrategy {
 
     @Override
     public void rename(File file) {
+        logger.info("正在处理 Dockerfile: " + file.getAbsolutePath());
         try {
             // 读取所有行
             List<String> lines = new ArrayList<>();

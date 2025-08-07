@@ -5,6 +5,10 @@ import com.akkkka.strategy.DirAndFileRenameStrategy;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -20,6 +24,8 @@ import static com.akkkka.RenameConfig.*;
 */
 public class Main {
     private static final Logger logger;
+    private static final ExecutorService executor = Executors.newFixedThreadPool(48);
+    private static CountDownLatch latch;
 
     static {
         logger = Logger.getLogger(Main.class.getName());
@@ -28,7 +34,7 @@ public class Main {
     public static String rootName;
     private static final RenameStrategyManager strategyManager = new RenameStrategyManager();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         Long startTime = System.currentTimeMillis();
         if(!destDir.endsWith("\\")){
             destDir = destDir+"\\";
@@ -47,7 +53,20 @@ public class Main {
         File file = new File(destDir+rootName);
         logger.info("开始重命名文件");
         fileBatchRename(file);
-        logger.info("所有文件重命名完成");
+
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    logger.warning("线程池未能正常关闭");
+                }
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+
         Long endTime = System.currentTimeMillis();
         logger.info("耗时:"+(endTime-startTime)+"ms");
     }
@@ -81,21 +100,27 @@ public class Main {
         return rootName;
     }
     // 修改 fileBatchRename 方法
-    public static void fileBatchRename(File rootDir){
+    public static void fileBatchRename(File rootDir) {
         //为了防止路径混乱，先重命名dirname和filename
         DirAndFileRenameStrategy dirAndFileRenameStrategy = new DirAndFileRenameStrategy();
         try(Stream<Path> paths = Files.walk(rootDir.toPath())){
             paths.sorted(
                     Comparator.comparingInt(
                             path -> path.toString().split("\\\\").length).reversed())
-            .forEach(path -> dirAndFileRenameStrategy.rename(path.toFile()));
+            .forEach(path -> {
+                File file = path.toFile();
+                dirAndFileRenameStrategy.rename(file);
+            });
         }catch (IOException | SecurityException e){
             logger.log(Level.SEVERE,"处理文件失败: " + rootDir.getAbsolutePath(),e);
         }
-        //再处理文件内容
-        rootDir = new File(destDir + MY_PROJECT_NAME);
-        try (Stream<Path> paths = Files.walk(rootDir.toPath())){
-            paths.forEach(path -> strategyManager.renameFile(path.toFile()));
+        rootDir = new File(destDir+MY_PROJECT_NAME);
+        try(Stream<Path> paths = Files.walk(rootDir.toPath())){
+            paths.filter(path ->
+                    path.toFile().isFile()&&strategyManager.supports(path.toFile()))
+                    .forEach(path -> executor.execute(()->{
+                        strategyManager.renameFile(path.toFile());
+                    }));
         }catch (IOException | SecurityException e){
             logger.log(Level.SEVERE,"处理文件失败: " + rootDir.getAbsolutePath(),e);
         }
