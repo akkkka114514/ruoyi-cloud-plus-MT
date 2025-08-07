@@ -38,11 +38,10 @@ public class MonitorApplicationJavaRenameStrategy extends JavaRenameStrategy{
             .filter(mce -> "run".equals(mce.getNameAsString()))
             .filter(mce -> mce.getScope().isPresent())
             .filter(mce -> "SpringApplication".equals(mce.getScope().get().toString()))
-            .forEach(mce -> {
+            .forEach(mce ->
                 mce.getArguments().stream()
                     .filter(arg -> arg instanceof ClassExpr)
-                    .forEach(arg -> renameInClassExpr((ClassExpr)arg));
-
-            });
+                    .forEach(arg -> renameInClassExpr((ClassExpr)arg))
+            );
     }
 }

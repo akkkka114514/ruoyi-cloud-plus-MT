@@ -42,11 +42,11 @@ public class ApplicationJavaRenameStrategy extends JavaRenameStrategy{
     private void renameObjCreationInJava(CompilationUnit cu) {
         cu.findAll(ObjectCreationExpr.class).stream()
             .filter(oc -> oc.getType().getNameAsString().equals("SpringApplication"))
-            .forEach(oc -> {
+            .forEach(oc ->
                 oc.getArguments().stream()
                     .filter(arg -> arg instanceof ClassExpr)
-                    .forEach(arg -> renameInClassExpr((ClassExpr)arg));
-        });
+                    .forEach(arg -> renameInClassExpr((ClassExpr)arg))
+        );
     }
     private void renameAppClassNameInJava(CompilationUnit cu) {
         cu.findAll(ClassOrInterfaceDeclaration.class).forEach(cid -> {
