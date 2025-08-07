@@ -26,7 +26,6 @@ public class MapperXmlRenameStrategy extends XmlRenameStrategy {
 
     @Override
     public void rename(File file) {
-        logger.info("Rename mybatis mapper.xml:"+file.getAbsolutePath());
         Document document = parse(file);
         if(document!=null){
             renameNamespace(document);
@@ -36,7 +35,6 @@ public class MapperXmlRenameStrategy extends XmlRenameStrategy {
             saveXml(file, document);
             logger.info("mybatis mapper文件:" + file.getAbsolutePath() + "重命名成功");
         }
-        logger.info("mybatis mapper文件:" + file.getAbsolutePath() + "重命名完成");
     }
 
     private void renameNamespace(Document document) {

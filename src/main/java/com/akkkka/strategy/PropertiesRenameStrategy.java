@@ -35,7 +35,6 @@ public class PropertiesRenameStrategy implements RenameStrategy {
 
     @Override
     public void rename(File file) {
-        logger.log(Level.INFO, "正在处理properties文件：" + file.getAbsolutePath());
         Properties props = new Properties();
         String filename = file.getName();
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -74,7 +73,5 @@ public class PropertiesRenameStrategy implements RenameStrategy {
         } catch (IOException e) {
             logger.log(Level.SEVERE, "保存properties配置文件失败");
         }
-
-        logger.log(Level.INFO, "处理properties文件完成：" + file.getAbsolutePath());
     }
 }

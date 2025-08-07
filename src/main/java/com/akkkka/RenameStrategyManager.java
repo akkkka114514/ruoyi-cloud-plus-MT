@@ -10,6 +10,7 @@ import com.akkkka.strategy.xml.RunXmlRenameStrategy;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author: akkkka114514
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public class RenameStrategyManager {
     private final List<RenameStrategy> strategies;
+    Logger logger = Logger.getLogger(RenameStrategyManager.class.getName());
 
     public RenameStrategyManager() {
         this.strategies = new ArrayList<>();
@@ -54,7 +56,11 @@ public class RenameStrategyManager {
     public void renameFile(File file) {
         for (RenameStrategy strategy : strategies) {
             if (strategy.supports(file)) {
+                logger.info("开始重命名文件："+file.getAbsolutePath());
+                long startTime = System.currentTimeMillis();
                 strategy.rename(file);
+                long endTime = System.currentTimeMillis();
+                logger.info("重命名文件完成："+file.getAbsolutePath()+",耗时："+(endTime-startTime)+"ms");
             }
         }
     }

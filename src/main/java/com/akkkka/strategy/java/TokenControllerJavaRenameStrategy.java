@@ -27,12 +27,10 @@ public class TokenControllerJavaRenameStrategy extends JavaRenameStrategy{
 
     @Override
     public void rename(File file) {
-        logger.info("重命名TokenController.java内容："+file.getAbsolutePath());
         CompilationUnit cu = parse(file);
 
         renameStringLiteralExprInJava(cu,RuoYi_STRING,MY_PROJECT_NAME);
 
         writeFile(file, cu);
-        logger.info("重命名TokenController.java内容："+file.getAbsolutePath()+"成功");
     }
 }

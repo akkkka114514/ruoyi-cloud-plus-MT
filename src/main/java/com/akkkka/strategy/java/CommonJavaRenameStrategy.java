@@ -20,7 +20,6 @@ public class CommonJavaRenameStrategy extends JavaRenameStrategy{
     }
     @Override
     public void rename(File file) {
-        logger.info("重命名java文件中的package语句、author、import语句内容："+file.getAbsolutePath());
         CompilationUnit cu = parse(file);
 
         renamePackageExprInJava(cu);
@@ -28,6 +27,5 @@ public class CommonJavaRenameStrategy extends JavaRenameStrategy{
         renameAuthor(cu);
 
         writeFile(file, cu);
-        logger.info("重命名java文件中的package语句、author、import语句内容完成："+file.getAbsolutePath());
     }
 }

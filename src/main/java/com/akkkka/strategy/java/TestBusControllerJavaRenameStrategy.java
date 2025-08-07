@@ -25,12 +25,10 @@ public class TestBusControllerJavaRenameStrategy extends JavaRenameStrategy{
 
     @Override
     public void rename(File file) {
-        logger.info("重命名TestBusController.java内容："+file.getAbsolutePath());
         CompilationUnit cu = parse(file);
 
         renameCommentInJava(cu);
 
         writeFile(file, cu);
-        logger.info("重命名TestBusController.java内容："+file.getAbsolutePath()+"成功");
     }
 }

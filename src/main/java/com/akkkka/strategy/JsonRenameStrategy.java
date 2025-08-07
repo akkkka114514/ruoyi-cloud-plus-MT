@@ -37,7 +37,6 @@ public class JsonRenameStrategy implements RenameStrategy, Parsable<JsonElement>
 
     @Override
     public void rename(File file) {
-        logger.info("正在处理JSON文件:"+file.getAbsolutePath());
         JsonElement je = parse(file);
         String filename = file.getName();
         if(filename.equals("sentinel-"+MY_PROJECT_NAME+"-gateway.json")){
@@ -71,10 +70,8 @@ public class JsonRenameStrategy implements RenameStrategy, Parsable<JsonElement>
                         parent.get("text").getAsString().replace(ruoyi_STRING, MY_PROJECT_NAME);
                 parent.addProperty("text", newValue);
                 parent.addProperty("value", newValue);
-        }else {return;}
-
+        }
         writeFile(file, je);
-        logger.info("处理完成JSON文件:"+file.getAbsolutePath());
     }
 
 

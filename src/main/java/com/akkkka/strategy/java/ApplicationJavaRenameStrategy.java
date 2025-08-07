@@ -31,14 +31,12 @@ public class ApplicationJavaRenameStrategy extends JavaRenameStrategy{
 
     @Override
     public void rename(File file) {
-        logger.info("重命名Application.java内容："+file.getAbsolutePath());
         CompilationUnit cu = parse(file);
 
         renameAppClassNameInJava(cu);
         renameObjCreationInJava(cu);
 
         writeFile(file, cu);
-        logger.info("重命名Application.java内容："+file.getAbsolutePath()+"成功");
     }
 
     private void renameObjCreationInJava(CompilationUnit cu) {

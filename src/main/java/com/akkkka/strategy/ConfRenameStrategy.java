@@ -30,7 +30,6 @@ public class ConfRenameStrategy implements RenameStrategy {
 
     @Override
     public void rename(File file) {
-        logger.log(Level.INFO, "正在处理conf文件: " + file.getAbsolutePath());
         try{
             List<String> lines = Files.readAllLines(file.toPath());
             for (int i = 0; i < lines.size(); i++) {
@@ -43,6 +42,5 @@ public class ConfRenameStrategy implements RenameStrategy {
         }catch (IOException e){
             logger.log(Level.SEVERE, "解析JSON文件失败: " + file.getAbsolutePath(), e);
         }
-        logger.log(Level.INFO, "处理完成conf文件: " + file.getAbsolutePath());
     }
 }

@@ -21,7 +21,6 @@ public class RunXmlRenameStrategy extends XmlRenameStrategy {
 
     @Override
     public void rename(File file) {
-        logger.info("Rename run.xml:"+file.getAbsolutePath());
         Document document = parse(file);
         if (document != null) {
             renameConfigurationNode(document);
@@ -30,7 +29,6 @@ public class RunXmlRenameStrategy extends XmlRenameStrategy {
             saveXml(file, document);
             logger.info("run.xml文件:" + file.getAbsolutePath() + "重命名成功");
         }
-        logger.info("Rename run.xml:"+file.getAbsolutePath()+"结束");
     }
     public void renameConfigurationNode(Document document){
         getNodes("//configuration", document).forEach(node -> {

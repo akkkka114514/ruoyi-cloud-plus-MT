@@ -36,7 +36,6 @@ public class SqlRenameStrategy implements RenameStrategy {
 
     @Override
     public void rename(File file) {
-        logger.info("开始处理SQL文件: " + file.getAbsolutePath());
         LinkedList<String> newLines = new LinkedList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))){
             br.lines()
@@ -52,7 +51,6 @@ public class SqlRenameStrategy implements RenameStrategy {
             logger.log(Level.SEVERE, "解析SQL文件失败: " + file.getAbsolutePath(), e);
         }
         writeFile(file, newLines);
-        logger.info("处理完成SQL文件: " + file.getAbsolutePath());
     }
 
 

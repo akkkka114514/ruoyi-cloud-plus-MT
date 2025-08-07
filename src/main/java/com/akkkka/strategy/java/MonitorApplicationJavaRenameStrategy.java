@@ -26,13 +26,11 @@ public class MonitorApplicationJavaRenameStrategy extends JavaRenameStrategy{
 
     @Override
     public void rename(File file) {
-        logger.info("重命名MyExampleProjectMonitorApplication.java内容："+file.getAbsolutePath());
         CompilationUnit cu = parse(file);
 
         renameInRunFunc(cu);
 
         writeFile(file, cu);
-        logger.info("重命名MyExampleProjectMonitorApplication.java内容："+file.getAbsolutePath()+"成功");
     }
 
     private void renameInRunFunc(CompilationUnit cu){
