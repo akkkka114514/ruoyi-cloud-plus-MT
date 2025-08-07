@@ -12,7 +12,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 import static com.akkkka.Constants.*;
 import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
