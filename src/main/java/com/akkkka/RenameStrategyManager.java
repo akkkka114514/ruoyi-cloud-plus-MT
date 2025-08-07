@@ -1,9 +1,6 @@
 package com.akkkka;
 
-import com.akkkka.strategy.ConfRenameStrategy;
-import com.akkkka.strategy.DockerfileRenameStrategy;
-import com.akkkka.strategy.JsonRenameStrategy;
-import com.akkkka.strategy.PropertiesRenameStrategy;
+import com.akkkka.strategy.*;
 import com.akkkka.strategy.java.*;
 import com.akkkka.strategy.yml.*;
 import com.akkkka.strategy.xml.MapperXmlRenameStrategy;
@@ -32,6 +29,8 @@ public class RenameStrategyManager {
         strategies.add(new PropertiesRenameStrategy());
         strategies.add(new DockerfileRenameStrategy());
         strategies.add(new ConfRenameStrategy());
+        strategies.add(new SqlRenameStrategy());
+        strategies.add(new JsonRenameStrategy());
 
         strategies.add(new ApplicationJavaRenameStrategy());
         strategies.add(new MonitorApplicationJavaRenameStrategy());
@@ -50,7 +49,6 @@ public class RenameStrategyManager {
         strategies.add(new MonitorYmlRenameStrategy());
         strategies.add(new SnailjobServerYmlRenameStrategy());
 
-        strategies.add(new JsonRenameStrategy());
     }
 
     public void renameFile(File file) {
