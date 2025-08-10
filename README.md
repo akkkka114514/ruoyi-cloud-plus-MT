@@ -29,8 +29,27 @@
 ## 使用方法
 
 1. 确保已安装 JDK 17 或更高版本
-2. 克隆本项目到本地
-3. 按照具体使用说明执行替换操作
+2. 下载最新的可执行 jar 包
+3. 执行以下命令进行项目替换：
+```
+java -jar ruoyi-cloud-plus-MT-1.0.0-jar-with-dependencies.jar 
+--group-id com.example 
+--project-name my-example-project 
+--app-name MyExampleProject 
+--dest-dir \dest\path 
+--zip-path zip\path\RuoYi-Cloud-Plus.zip 
+--thread-num 24
+```
+### 参数说明
+
+| 参数名 | 说明 | 示例 |
+|--------|------|------|
+| `--group-id` | Maven Group ID | `com.example` |
+| `--project-name` | 项目名称 | `my-example-project` |
+| `--app-name` | 应用名称 | `MyExampleProject` |
+| `--dest-dir` | 输出目录路径 | `\dest\path` |
+| `--zip-path` | 源码包路径 | `zip\path\RuoYi-Cloud-Plus.zip` |
+| `--thread-num` | 处理线程数 | `24` |
 
 ## 适用场景
 
@@ -43,6 +62,8 @@
 - 使用前请备份原项目
 - 建议在测试环境中先进行验证
 - 如遇到问题，请提交 issue 进行反馈
+- 本作品尚未支持 Linux 系统
+- **推荐使用cmd**
 
 ---
 <p align="center">
