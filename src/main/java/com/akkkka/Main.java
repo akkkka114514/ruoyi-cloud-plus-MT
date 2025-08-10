@@ -1,9 +1,11 @@
 package com.akkkka;
 
 import com.akkkka.strategy.DirAndFileRenameStrategy;
+import org.apache.commons.cli.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,16 +25,24 @@ import static com.akkkka.RenameConfig.*;
 */
 public class Main {
     private static final Logger logger;
-    private static final ExecutorService executor = Executors.newFixedThreadPool(48);
-
+    private static final ExecutorService executor = Executors.newFixedThreadPool(THREAD_NUM);
+    private static final Options options = new Options();
     static {
         logger = Logger.getLogger(Main.class.getName());
         logger.setLevel(LOG_LEVEL);
+
+        options.addOption("g", "group-id", true, "The group id of the project");
+        options.addOption("p", "project-name", true, "The project name");
+        options.addOption("a", "app-name", true, "The app name");
+        options.addOption("d", "dest-dir", true, "The destination directory");
+        options.addOption("z", "zip-path", true, "The zip path");
+        options.addOption("t", "thread-num", true, "The thread number");
     }
     public static String rootName;
     private static final RenameStrategyManager strategyManager = new RenameStrategyManager();
 
     public static void main(String[] args) throws IOException {
+        parseArgs(args);
         Long startTime = System.currentTimeMillis();
         if(!destDir.endsWith("\\")){
             destDir = destDir+"\\";
@@ -54,9 +64,9 @@ public class Main {
 
         executor.shutdown();
         try {
-            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+            if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
-                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
                     logger.warning("线程池未能正常关闭");
                 }
             }
@@ -122,5 +132,20 @@ public class Main {
             logger.log(Level.SEVERE,"处理文件失败: " + rootDir.getAbsolutePath(),e);
         }
     }
+    private static void parseArgs(String[] args) {
+        CommandLineParser parser = new DefaultParser();
+        try {
+            CommandLine cmd = parser.parse(options, args);
+            MY_GROUP_ID = cmd.getOptionValue("g");
+            MY_PROJECT_NAME = cmd.getOptionValue("p");
+            MY_APP_NAME = cmd.getOptionValue("a");
+            destDir = cmd.getOptionValue("d");
+            ZIP_PATH = cmd.getOptionValue("z");
+            THREAD_NUM = Integer.parseInt(cmd.getOptionValue("t").trim());
+        }catch (ParseException | NumberFormatException e){
+            logger.log(Level.SEVERE,"参数解析失败",e);
+            System.exit(1);
+        }
 
+    }
 }
