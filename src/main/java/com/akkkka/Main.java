@@ -5,7 +5,6 @@ import org.apache.commons.cli.*;
 
 import java.io.*;
 import java.nio.file.*;
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
