@@ -26,7 +26,7 @@ import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
 public class DockerfileRenameStrategy implements RenameStrategy {
     private static final Logger logger;
     static {
-        logger = Logger.getLogger(DirAndFileRenameStrategy.class.getName());
+        logger = Logger.getLogger(DockerfileRenameStrategy.class.getName());
         logger.setLevel(LOG_LEVEL);
     }
     @Override

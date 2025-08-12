@@ -19,8 +19,11 @@ import java.util.logging.Logger;
  */
 public class RenameStrategyManager {
     private final List<RenameStrategy> strategies;
-    Logger logger = Logger.getLogger(RenameStrategyManager.class.getName());
-
+    private static final Logger logger;
+    static {
+        logger = Logger.getLogger(RenameStrategyManager.class.getName());
+        logger.setLevel(Constants.LOG_LEVEL);
+    }
     public RenameStrategyManager() {
         this.strategies = new ArrayList<>();
 
@@ -64,13 +67,13 @@ public class RenameStrategyManager {
             }
         }
     }
+    //用于过滤不需要处理的文件
 
     public boolean supports(File file) {
+        boolean flag = false;
         for (RenameStrategy strategy : strategies) {
-            if (strategy.supports(file)) {
-                return true;
-            }
+            flag = flag || strategy.supports(file);
         }
-        return false;
+        return flag;
     }
 }

@@ -76,12 +76,9 @@ public class DirAndFileRenameStrategy implements RenameStrategy {
         try {
             if (file.isDirectory()) {
                 if (target.exists()) {
-                    // 如果目标目录已存在，则将源目录移动到目标目录中
-                    FileUtils.moveToDirectory(file, target, !DO_CREATE_DEST_DIR);
-                } else {
-                    // 如果目标目录不存在，则创建目标目录并移动源目录
-                    FileUtils.moveDirectory(file, target);
+                    FileUtils.deleteDirectory(target);
                 }
+                FileUtils.moveDirectory(file, target);
             } else {
                 if (filename.split("\\.").length >= 3) {
                     //处理ruoyi-snailjob-server.run.xml这样的，一般方法会重命名失败

@@ -1,7 +1,9 @@
 package com.akkkka.strategy;
 
+import com.akkkka.Constants;
 import com.akkkka.Parsable;
 import com.akkkka.RenameStrategy;
+import com.akkkka.strategy.xml.RunXmlRenameStrategy;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,6 +14,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.akkkka.Constants.ruoyi_STRING;
 import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
@@ -22,8 +25,12 @@ import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
  * @description:
  */
 public class JsonRenameStrategy implements RenameStrategy, Parsable<JsonElement> {
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JsonRenameStrategy.class.getName());
 
+    private static final Logger logger;
+    static {
+        logger = Logger.getLogger(JsonRenameStrategy.class.getName());
+        logger.setLevel(Constants.LOG_LEVEL);
+    }
     private static final Gson gson = new Gson();
     @Override
     public boolean supports(File file) {

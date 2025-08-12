@@ -19,7 +19,7 @@ import static com.akkkka.Constants.ruoyi_STRING;
 public class ConfRenameStrategy implements RenameStrategy {
     private static final Logger logger;
     static {
-        logger = Logger.getLogger(DirAndFileRenameStrategy.class.getName());
+        logger = Logger.getLogger(ConfRenameStrategy.class.getName());
         logger.setLevel(LOG_LEVEL);
     }
 

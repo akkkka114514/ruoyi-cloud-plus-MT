@@ -1,9 +1,11 @@
 package com.akkkka.strategy.xml;
 
+import com.akkkka.Constants;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import static com.akkkka.Constants.ruoyi_STRING;
 import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
@@ -14,6 +16,11 @@ import static com.akkkka.RenameConfig.MY_PROJECT_NAME;
  * @description:修改.run.xml文件的内容
  */
 public class RunXmlRenameStrategy extends XmlRenameStrategy {
+    private static final Logger logger;
+    static {
+        logger = Logger.getLogger(RunXmlRenameStrategy.class.getName());
+        logger.setLevel(Constants.LOG_LEVEL);
+    }
     @Override
     public boolean supports(File file) {
         return file.getName().endsWith(".run.xml");

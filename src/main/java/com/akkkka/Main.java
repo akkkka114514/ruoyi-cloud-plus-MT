@@ -121,6 +121,7 @@ public class Main {
         }catch (IOException | SecurityException e){
             logger.log(Level.SEVERE,"处理文件失败: " + rootDir.getAbsolutePath(),e);
         }
+        //处理文件内容
         rootDir = new File(destDir+MY_PROJECT_NAME);
         try(Stream<Path> paths = Files.walk(rootDir.toPath())){
             paths.filter(path ->

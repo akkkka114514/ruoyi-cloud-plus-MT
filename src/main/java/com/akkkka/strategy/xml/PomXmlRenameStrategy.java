@@ -3,10 +3,14 @@ package com.akkkka.strategy.xml;
 import com.akkkka.Constants;
 import org.dom4j.Document;
 import org.dom4j.Node;
+import org.dom4j.XPath;
+
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.akkkka.Constants.*;
@@ -30,7 +34,6 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy {
         namespace = new HashMap<>();
         namespace.put("xmlns", "http://maven.apache.org/POM/4.0.0");
         namespace.put("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        namespace.put("xsi:schemaLocation", "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd");
     }
 
     @Override
@@ -61,6 +64,19 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy {
         getNodes(XPATH_NAMESPACE_PREFIX+"groupId", document)
                 .stream()
                 .filter(node -> node.getText().contains(RUOYI_GROUP_ID))
+                .filter(node -> {
+                    XPath xpath = node.getParent().createXPath("./xmlns:artifactId");
+                    xpath.setNamespaceURIs(namespace);
+                    List<Node> artifactIdNodes = xpath.selectNodes(node.getParent());
+                    if(!artifactIdNodes.isEmpty()){
+                        String artifactId = artifactIdNodes.get(0).getText();
+                        return !(artifactId.equals("sms4j-spring-boot-starter")
+                                ||artifactId.equals("easy-es-boot-starter")
+                                ||artifactId.equals("warm-flow-mybatis-plus-sb3-starter")
+                                ||artifactId.equals("warm-flow-plugin-ui-sb-web"));
+                    }
+                    return true;
+                })
                 .forEach(node -> node.setText(MY_GROUP_ID));
     }
 
@@ -76,8 +92,7 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy {
                             node.setText(MY_PROJECT_NAME);
                         }else {
                             node.setText(
-                                text.replace(RUOYI_PROJECT_NAME, MY_PROJECT_NAME)
-                                    .replace(ruoyi_STRING, MY_PROJECT_NAME));
+                                text.replace(ruoyi_STRING, MY_PROJECT_NAME));
                         }
                 });
     }
@@ -113,6 +128,9 @@ public class PomXmlRenameStrategy extends XmlRenameStrategy {
                     }
                     if(text.contains(ruoyi_STRING)){
                         node.setText(text.replace(ruoyi_STRING,MY_PROJECT_NAME));
+                    }
+                    if(text.contains(RUOYI_GROUP_ID)){
+                        node.setText(text.replace(RUOYI_GROUP_ID,MY_GROUP_ID));
                     }
                 });
     }
