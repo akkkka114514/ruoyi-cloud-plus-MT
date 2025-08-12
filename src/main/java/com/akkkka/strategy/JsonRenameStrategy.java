@@ -3,7 +3,6 @@ package com.akkkka.strategy;
 import com.akkkka.Constants;
 import com.akkkka.Parsable;
 import com.akkkka.RenameStrategy;
-import com.akkkka.strategy.xml.RunXmlRenameStrategy;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
